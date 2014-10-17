@@ -62,7 +62,7 @@ The happy upshot of relaxing the requirement for unpredictability in the random 
 
 In essence, the procedure consists of plugging our RNG into a mixer loop. A state array of any desired power of 2 is incorporated to receive the extended seed bytes. Four variables - b, c, d, e - are introduced to accelerate the mixing and increase overall avalanche. A state-size of 8 always produces the most rapid mixing, giving avalanche in excess of 16 bits, while 16 and above tends to minimize the chances of bias. Very little performance overhead is experienced, since the mixer employs only one XOR, one subtraction and two addition operations.
 
-The chosen mixer, AUM, is an eminently serviceable CSPRNG in its own right, with outstanding stochastic characteristics:
+The chosen mixer, AUM (pronounced 'OM'), is an eminently serviceable CSPRNG in its own right, with outstanding stochastic characteristics:
 
 		#define STSZ 16
 		#define STM1 STSZ-1
@@ -129,9 +129,9 @@ AUM and ALEPH aside, one of the shortest and simplest cryptographic generators t
 
 IOTA is of course Marsaglia's tiny Fibonacci generator (FIB), miraculously transformed through AUM's mixing and indirection. 
 
-Any non-linear mapping is a fine basis for a strong cipher. The most basic operations in simple combinations - addition, subtraction, OR, XOR, shift and rotate - are invariably the best. Digital cryptography is not rocket science. Any half-competent programmer can craft a superb RNG in an hour plus a few days of rigorous testing. And, with an internal state greater than 128 bits, that generator will be cryptographically strong almost by definition once the magical MOD operation is applied as a final stage before output.
+Any non-linear mapping is a fine basis for a strong cipher. The most basic operations in simple combinations - addition, subtraction, OR, XOR, shift and rotate - are invariably the best. More art than science, digital cryptography is neither sacrosanct nor reserved for the few. Any half-competent programmer can craft a superb RNG in an hour plus a few days of rigorous testing. And, with an internal state greater than 128 bits, that generator will be cryptographically strong almost by definition once the magical MOD operation is applied as a final stage before output.
 
-Regrettably, since their very existential relevance depends upon it, "professional" cryptographers would have you believe otherwise; it is as if their running brief were to treat with hostility and resentment any person who might dare to suggest that strong cryptography is easy (it is). 
+Regrettably, since their very existential relevance depends upon it, "professional" cryptographers would have you believe otherwise; it is as if their running brief were to treat with hostility and resentment any person who might dare to suggest that strong cryptography is easy and for everyone (it is). 
 
 These same people become shrill at the mention of MOD, despite it having been demonstrated (see ModTrial.pas and SamTrial.c) that use of this operator to constrain RNG output results in the most nearly uniform value-distributions when contrasted with outcomes employing alternative schemes. In common with other commentators, they are merely parrotting - and failing to test - conventional wisdom.
 

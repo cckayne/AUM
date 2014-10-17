@@ -1,0 +1,203 @@
+ModTrial: A program to demonstrate the uniformity of MOD with 32-bit random values
+-----------------------------------------------------------------------------------
+
+It has been suggested that the MOD (%) operator does not offer sufficiently uniform distribution when limiting the range of a CSPRNG for cryptographic purposes, as in <mod 26> [A..Z].
+
+The purpose of the ModTrial program is to demonstrate the practical statistical fallacy of that assertion.
+
+Multiple Monte Carlo runs with ModTrial(.exe) have shown that the use of MOD on 32-bit pseudo-random values does NOT skew the distribution and that use of alternative schemes for limiting the range of a PRNG's output is unwarranted.
+  
+Probability distributions over several runs of ModTrial with varying input parameters were found to be almost perfectly uniform.
+   
+The following, supposedly superior, scheme was also tested and it resulted in a somewhat less uniform distribution than did the MOD operator alone:
+
+int rand_lim(int limit) {
+/* return a random number between 0 and limit inclusive. */
+
+    int divisor = RAND_MAX/(limit+1);
+    int retval;
+
+    do { 
+        retval = rand() / divisor;
+    } while (retval > limit);
+
+    return retval;
+}
+
+In common with other commentators, the author of this function erroneously states:
+
+"Attempts that just use % (MOD) or, equivalently, / (DIV), to get the numbers in a range almost inevitably introduce skew (i.e. some numbers will be generated more often than others)."
+
+It is hoped that ModTrial will give the lie to such claims once and for all. The MOD (%) operator is not only simpler and faster, but irrefutably better.
+
+
+ModTrial Usage
+--------------
+
+Usage:   >modtrial <modulo> <# of trials> <seed> <RNG>
+Example: >modtrial 26 32 "my seed" 2
+Permitted range for # trials: 100-2**64.
+(If # given is in [8..64], 2**# is assumed.)
+Permitted modulos: 26, 95, 128, 256.
+Available RNGs   : [0..14] 2=ISAAC 3=BB128 4=BB256 5=BB512.
+All command line parameters are optional.
+Default: mod 26 BB512 with 100000000 trials.
+
+
+Tabulated summary from a sample set of trials
+---------------------------------------------
+
+Modulo	Trials(n)  	 Mean P		Max-Min P		 Sigma P		Sigma**2 *10E4
+------------------------------------------------------------------------------		
+26		2**28		0.0384615	0.0000541		0.0000122		0.0000015
+26		2**29		0.0384615	0.0000263		0.0000077		0.0000006
+26		2**30		0.0384615	0.0000203		0.0000054		0.0000003
+26		2**31		0.0384615	0.0000185		0.0000041		0.0000002
+26		2**32		0.0384615	0.0000083		0.0000023		0.0000001
+26		2**33		0.0384615	0.0000063		0.0000016		0.0000000
+
+Notice how, as the number of trials doubles, Sigma, Sigma**2 and the Range are approaching 0.0, the expected Standard Deviation and Variance for a perfectly uniform distribution. This asymptotic trend holds for all unbiased PRNGs and for all modulos under consideration, namely 26, 95, 128 and 256: As n approaches infinity, sigma tends to zero (in accordance with Cramér's large deviation theorem, which states that the probability of a large deviation from the Mean decays exponentially with the number of samples).
+
+The complete program output for this sample set follows.
+
+
+Sample output from ModTrial:
+----------------------------
+
+>modtrial 26 28 "modtrial" 2
+ModTrial: Practical demonstration of the non-skewedness of the MOD operation
+ on 32-bit random values emitted by a PRNG in a Monte Carlo simulation.
+
+Experiment: 268435455 ISAAC trials using MOD 26
+Experiment starts...
+Experiment ends.
+
+Min  probability ( F)   =   0.0384354
+Med  probability ( J)   =   0.0384598
+Max  probability ( U)   =   0.0384895
+Max-Min probability     =   0.0000541
+Mean     (expect)       =   0.0384615
+Mean     (actual)       =   0.0384615
+Sigma    (expect)       =   0.0000000
+Sigma    (actual)       =   0.0000122
+Variance (expect) *10E4 =   0.0000000
+Variance (actual) *10E4 =   0.0000015
+Chi-square              =  -1.6666667
+
+
+>modtrial 26 29 "modtrial" 2
+ModTrial: Practical demonstration of the non-skewedness of the MOD operation
+ on 32-bit random values emitted by a PRNG in a Monte Carlo simulation.
+
+Experiment: 536870911 ISAAC trials using MOD 26
+Experiment starts...
+Experiment ends.
+
+Min  probability ( W)   =   0.0384491
+Med  probability ( V)   =   0.0384606
+Max  probability ( U)   =   0.0384754
+Max-Min probability     =   0.0000263
+Mean     (expect)       =   0.0384615
+Mean     (actual)       =   0.0384615
+Sigma    (expect)       =   0.0000000
+Sigma    (actual)       =   0.0000077
+Variance (expect) *10E4 =   0.0000000
+Variance (actual) *10E4 =   0.0000006
+Chi-square              =  -1.6666667
+
+
+>modtrial 26 30 "modtrial" 2
+ModTrial: Practical demonstration of the non-skewedness of the MOD operation
+ on 32-bit random values emitted by a PRNG in a Monte Carlo simulation.
+
+Experiment: 1073741823 ISAAC trials using MOD 26
+Experiment starts...
+Experiment ends.
+
+Min  probability ( S)   =   0.0384509
+Med  probability ( R)   =   0.0384621
+Max  probability ( G)   =   0.0384712
+Max-Min probability     =   0.0000203
+Mean     (expect)       =   0.0384615
+Mean     (actual)       =   0.0384615
+Sigma    (expect)       =   0.0000000
+Sigma    (actual)       =   0.0000054
+Variance (expect) *10E4 =   0.0000000
+Variance (actual) *10E4 =   0.0000003
+Chi-square              =  -1.6666667
+
+
+>modtrial 26 31 "modtrial" 2
+ModTrial: Practical demonstration of the non-skewedness of the MOD operation
+ on 32-bit random values emitted by a PRNG in a Monte Carlo simulation.
+
+Experiment: 2147483647 ISAAC trials using MOD 26
+Experiment starts...
+Experiment ends.
+
+Min  probability ( Y)   =   0.0384527
+Med  probability ( A)   =   0.0384610
+Max  probability ( U)   =   0.0384712
+Max-Min probability     =   0.0000185
+Mean     (expect)       =   0.0384615
+Mean     (actual)       =   0.0384615
+Sigma    (expect)       =   0.0000000
+Sigma    (actual)       =   0.0000041
+Variance (expect) *10E4 =   0.0000000
+Variance (actual) *10E4 =   0.0000002
+Chi-square              =  -1.6666667
+
+
+>modtrial 26 32 "modtrial" 2
+ModTrial: Practical demonstration of the non-skewedness of the MOD operation
+ on 32-bit random values emitted by a PRNG in a Monte Carlo simulation.
+
+Experiment: 4294967295 ISAAC trials using MOD 26
+Experiment starts...
+Experiment ends.
+
+Min  probability ( W)   =   0.0384564
+Med  probability ( Z)   =   0.0384621
+Max  probability ( P)   =   0.0384647
+Max-Min probability     =   0.0000083
+Mean     (expect)       =   0.0384615
+Mean     (actual)       =   0.0384615
+Sigma    (expect)       =   0.0000000
+Sigma    (actual)       =   0.0000023
+Variance (expect) *10E4 =   0.0000000
+Variance (actual) *10E4 =   0.0000001
+Chi-square              =  -1.6666667
+
+
+>modtrial 26 33 "modtrial" 2
+ModTrial: Practical demonstration of the non-skewedness of the MOD operation
+ on 32-bit random values emitted by a PRNG in a Monte Carlo simulation.
+
+Experiment: 8589934591 ISAAC trials using MOD 26
+Experiment starts...
+Experiment ends.
+
+Min  probability ( W)   =   0.0384585
+Med  probability ( D)   =   0.0384613
+Max  probability ( K)   =   0.0384648
+Max-Min probability     =   0.0000063
+Mean     (expect)       =   0.0384615
+Mean     (actual)       =   0.0384615
+Sigma    (expect)       =   0.0000000
+Sigma    (actual)       =   0.0000016
+Variance (expect) *10E4 =   0.0000000
+Variance (actual) *10E4 =   0.0000000
+Chi-square              =  -1.6666667
+
+
+ModTrial is copyright (c) Conrad C. Kayne, 2014 and released into the Public Domain in the hope that it may be useful. See also <samtrial.c>, which outputs tabulated results over cumulative trial-sets, tests 2 alternative functions in addition to MOD, and is considerably faster than ModTrial.
+
+
+cckayne@gmail.com
+https://plus.google.com/u/2/114160148833284687117
+https://code.google.com/p/ses-super-encypherment-scrambler/
+https://github.com/cckayne/ses-scrambler
+https://sourceforge.net/projects/sessuperencyphermentscrambler/
+https://sourceforge.net/projects/bedbug-csprng-stream-cipher/
+https://code.google.com/p/bedbug-csprng-stream-cipher/
+https://github.com/cckayne/BEDBUG

@@ -1,5 +1,5 @@
 unit aum;
-(* AUM - A minimal CSPRNG reflecting the Zen of cipher design
+(* AUM - A small-state CSPRNG reflecting the Zen of cipher design
    AUM is an AUM with a 16,32 or 64+4-word internal state
    AUM may be seeded with a 512-, 1024- or 2048-bit key
    AUM Copyright C.C.Kayne 2014, GNU GPL V.3, cckayne@gmail.com
@@ -8,9 +8,9 @@ unit aum;
 {$mode delphi}
 {$inline on}
 //are we testing?
-{$define TEST}
+{ $define TEST}
 //verbose test output
-{$define VERBOSE}
+{ $define VERBOSE}
 
 interface
 
@@ -18,7 +18,7 @@ interface
 procedure auReset;
 // obtain an AUM pseudo-random value in [0..2**32]
 function auRandom: Cardinal;
-// seed AUM with a 2048-bit block of 4-byte words (Bob Jenkins method) 
+// seed AUM with a 512-bit block of 4-byte words (Bob Jenkins method) 
 procedure auSeedW(seed: string; rounds: integer);
 // AUM # of bits internal state
 function auStateBits: Cardinal;
@@ -30,7 +30,6 @@ function auName: string;
 implementation
 {$ifdef TEST}uses StrUtils;{$endif}
 
-// select your AUM variant here
 {$define AUM16}
 { $define AUM32}
 { $define AUM64}
@@ -130,7 +129,7 @@ function auRandom: Cardinal;
 	end;
 
 
-// seed AUM with a 2048-bit block of 4-byte words (Bob Jenkins method) 
+// seed AUM with a 512-bit block of 4-byte words (Bob Jenkins method) 
 procedure auSeedW(seed: string; rounds: integer);
 	var i,l: Cardinal;
 		p: pointer;
@@ -141,8 +140,6 @@ procedure auSeedW(seed: string; rounds: integer);
 		auReset;
 		for i:=0 to l-1 do
 			byte((p+i)^) := byte(seed[i+1]);
-		// fatten the variables on some key-bytes
-		b+=state[2]; c+=state[1]; d+=state[0]; 
 		aum;
 		for i:=1 to rounds do auRandom;  
 	end;

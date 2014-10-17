@@ -80,9 +80,6 @@ int main(int argc, char *argv[]) {
 		#ifdef AUM
 		n1 = aum_Random(); n2 = aum_Random();
 		#endif
-		#ifdef OM
-		n1 = Om; n2 = Om;
-		#endif
 		// compute # of changed bits
 		n3 = n1 ^ n2;
 		p  = pop1(n3);
