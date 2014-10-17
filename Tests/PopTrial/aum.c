@@ -1,4 +1,4 @@
-/* AUM - A minimal CSPRNG reflecting the Zen of cipher design
+/* AUM - A stripped-down CSPRNG reflecting the Zen of cipher design
    AUM is an AUM with an 8,16,32 or 64+4-word internal state
    AUM may be seeded with a 256-, 512-, 1024- or 2048-bit key
    AUM Copyright C.C.Kayne 2014, GNU GPL V.3, cckayne@gmail.com
@@ -9,18 +9,23 @@
 #include <string.h>
 #include "aum.h"
 
-#define TEST
-#define VERBOSE
+//#define TEST
+//#define VERBOSE
 
 // AUM defines
+/* Select your AUM variant here */
 
-/* select your AUM variant here */
+//#define OM
 //#define AUM8
 #define AUM16
 //#define AUM32
 //#define AUM64
 
 /* internal state parameters */
+#ifdef OM
+#define STSZ 8
+#define NAME "OM"
+#endif
 #ifdef AUM8
 #define STSZ 8
 #define NAME "AUM8"
@@ -44,10 +49,15 @@
 /* 2**32/phi, where phi is the golden ratio */
 #define GOLDEN   0x9e3779b9
 
-static u4 state[STSZ], rsl[STSZ], b, c, d, e, rcnt=0;
+static u4 state[STSZ], rsl[STSZ], a=GOLDEN, b=GOLDEN, c=GOLDEN, d=GOLDEN, e=GOLDEN, rcnt=0;
 
 #ifdef TEST
 static void statepeek(void);
+#endif
+
+#ifdef OM
+/* Om is the unidimensional version of AUM */
+#define Om ( (e=a), (a=b^c), (b=c-d), (c=d+e), (d=e+a) )
 #endif
 
 
@@ -67,8 +77,9 @@ static void aum(void) {
 }
 
 
-// obtain an AUM pseudo-random value in [0..2**32]
+// obtain a AUM pseudo-random value in [0..2**32]
 u4 aum_Random(void) {
+	#ifndef OM
 	u4 r = rsl[rcnt];
 	++rcnt;
 	if (rcnt==STSZ) {
@@ -76,13 +87,16 @@ u4 aum_Random(void) {
 		rcnt = 0;
 	}
 	return r;
+	#else
+	return Om;
+	#endif
 }
 
 
 void aum_Reset(void) {
 	register u4 i,r;
 	rcnt = 0;
-	b = c = d = e = GOLDEN;
+	a = b = c = d = e = GOLDEN;
 	for (i=0; i<STSZ; i++) { state[i]=GOLDEN; rsl[i]=GOLDEN; }
 }
 
@@ -99,9 +113,11 @@ void aum_SeedW(char *seed, int rounds)
 	for (i=0; i<l; i++) s[i] = seed[i];
 	aum_Reset();
 	memcpy((char *)state, (char *)s, l);
-	/* fatten the variables on some key-bytes */
-	b+=state[2]; c+=state[1]; d+=state[0]; 
+	/* fatten the variables with some key-bytes */
+	a+=state[3]; b+=state[2]; c+=state[1]; d+=state[0]; 
+	#ifndef OM
 	aum();
+	#endif
 	for (i=0; i<rounds; i++) aum_Random();  
 }
 

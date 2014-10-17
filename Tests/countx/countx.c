@@ -36,9 +36,9 @@ static u4 loglen, terms;
 
 //#define OM
 //#define AUM8
-//#define AUM16
+#define AUM16
 //#define AUM32
-#define AUM64
+//#define AUM64
 
 #ifdef OM
 #define STSZ 1
@@ -64,15 +64,9 @@ typedef struct ranctx { u4 state[STSZ]; u4 rsl[STSZ]; u4 b; u4 c; u4 d; u4 e;} r
 
 static u4 rcnt=0; static u8 fcount=0; static u4 icount=0;
 
-#ifdef OM
-/* Om is the unidimensional version of AUM */
-#define Om ( (e=a), (a=b^c), (b=c-d), (c=d+e), (d=e+a) )
-static u4 a=GOLDEN, b=GOLDEN, c=GOLDEN, d=GOLDEN, e=GOLDEN;
-#endif
 
 static u4 ranval(ranctx *x) {
 	u4 i,r;
-	#ifndef OM
 	r = x->rsl[rcnt];
 	++rcnt; 
 	#ifdef VERBOSE
@@ -90,9 +84,6 @@ static u4 ranval(ranctx *x) {
 		rcnt = 0;
 	}
 	return r;
-	#else
-	return Om;
-	#endif
 }
 
 

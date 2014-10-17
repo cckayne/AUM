@@ -18,9 +18,9 @@ Stripped to essentials, AUM is only 5 lines of code:
 		
 <a> being indexes into AUM's internal state array.
 		
-Two additions, one subtraction, one XOR, two pseudo-random lookups. Six arithmetic and bitwise operations in all. It's called AUM - and pronounced 'OM' - because a CSPRNG can't be made any smaller (or faster) without introducing bias or severely reducing avalanche.
+Two additions, one subtraction, one XOR, two pseudo-random lookups. Six arithmetic and bitwise operations in all. It's called AUM - and pronounced 'OM' - because it best reflects the Zen of PRNG creation - everything superfluous peeled away, leaving just those six simple operations.
 
-Mean avalanche between successive calls to AUM is an impressive 16 bits, with a 30-bit maximum. In other words, mixing efficiency is nearly optimal. AUM best reflects the Zen of PRNG creation - everything superfluous peeled away, leaving just those six simple operations.
+Mean avalanche between successive calls to AUM is an impressive 16 bits, with a 30-bit maximum. In other words, mixing efficiency is nearly optimal. 
 
 The three AUM variants presented here have been implemented identically in C and Pascal and can be found in their respective directories along with a short program to check their output. AUM was developed and tested with the Microsoft Visual C compiler (cl) and Free Pascal (fpc) under Win32. The NIST statistical tests were run under Linux.
 
@@ -31,7 +31,6 @@ PRNG tests passed by AUM:
 * NIST suite of statistical tests for randomness: all tests for all seeds
 * George Marsaglia's DIEHARD suite: all tests for all seeds
 * Bob Jenkins' countx for sub-sequences of length 2-12 (2**35 trials)
-* Bob Jenkins' rngav (avalanche better than 20.0 bits average)
 * John Walker's ENT test for entropy
 * C.C.Kayne's GapTrial (value-spacings normal over all modulos)
 * C.C.Kayne's ModTrial (value-distributions uniform over all modulos)

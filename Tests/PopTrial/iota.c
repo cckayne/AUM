@@ -1,41 +1,40 @@
-/* AUM - A minimal CSPRNG reflecting the Zen of cipher design
-   AUM is an AUM with an 8,16,32 or 64+4-word internal state
-   AUM may be seeded with a 256-, 512-, 1024- or 2048-bit key
-   AUM Copyright C.C.Kayne 2014, GNU GPL V.3, cckayne@gmail.com
-   AUM is inspired by Bob Jenkins' PRNG insights (Public Domain).
+/* IOTA - A small-state CSPRNG and Stream Cipher
+   IOTA is a IOTA with an 8+4-word internal state
+   IOTA may be seeded with a 256-bit key
+   IOTA Copyright C.C.Kayne 2014, GNU GPL V.3, cckayne@gmail.com
+   IOTA is inspired by Bob Jenkins' PRNG insights (Public Domain).
 */
 #include <stdio.h>
 #include <stddef.h>
 #include <string.h>
-#include "aum.h"
+#include "iota.h"
 
-#define TEST
-#define VERBOSE
+//#define TEST
+//#define VERBOSE
 
-// AUM defines
-
-/* select your AUM variant here */
-//#define AUM8
-#define AUM16
-//#define AUM32
-//#define AUM64
-
+// IOTA defines
 /* internal state parameters */
-#ifdef AUM8
+
+//#define IOTA8
+//#define IOTA16
+#define IOTA32
+//#define IOTA64
+
+#ifdef IOTA8
 #define STSZ 8
-#define NAME "AUM8"
+#define NAME "IOTA8"
 #endif
-#ifdef AUM16
+#ifdef IOTA16
 #define STSZ 16
-#define NAME "AUM16"
+#define NAME "IOTA16"
 #endif
-#ifdef AUM32
+#ifdef IOTA32
 #define STSZ 32
-#define NAME "AUM32"
+#define NAME "IOTA32"
 #endif
-#ifdef AUM64
+#ifdef IOTA64
 #define STSZ 64
-#define NAME "AUM64"
+#define NAME "IOTA64"
 #endif
 #define STM1 STSZ-1
 #define STBYTES STSZ*4
@@ -43,19 +42,21 @@
 
 /* 2**32/phi, where phi is the golden ratio */
 #define GOLDEN   0x9e3779b9
+/* Fibonacci sequence */
+#define IOTA ((bb=aa+bb),(aa=bb-aa))
 
-static u4 state[STSZ], rsl[STSZ], b, c, d, e, rcnt=0;
+static u4 state[STSZ], rsl[STSZ], a, b, c, d, e;
+static u4 aa, bb, rcnt=0;
 
 #ifdef TEST
 static void statepeek(void);
 #endif
 
 
-// AUM is filled every 16, 32 or 64 rounds
-static void aum(void) {
+static void iota(void) {
 	u4 i;
 	for (i=0; i<STSZ; i++) {
-		e = state[d & STM1];
+		e = state[d & STM1] + IOTA;
 		state[d & STM1] = b ^ c;
 		b = c - d;
 		c = d + e;
@@ -67,28 +68,29 @@ static void aum(void) {
 }
 
 
-// obtain an AUM pseudo-random value in [0..2**32]
-u4 aum_Random(void) {
+// obtain a IOTA pseudo-random value in [0..2**32]
+u4 iota_Random(void) {
 	u4 r = rsl[rcnt];
 	++rcnt;
 	if (rcnt==STSZ) {
-		aum();
+		iota();
 		rcnt = 0;
 	}
 	return r;
 }
 
 
-void aum_Reset(void) {
+void iota_Reset(void) {
 	register u4 i,r;
 	rcnt = 0;
-	b = c = d = e = GOLDEN;
-	for (i=0; i<STSZ; i++) { state[i]=GOLDEN; rsl[i]=GOLDEN; }
+	aa = bb = b = c = d = e = GOLDEN;
+	for (i=0; i<STSZ; i++) { state[i]=GOLDEN; rsl[i]=0; }
 }
 
 
-// seed AUM with a 2048-bit block of 4-byte words (Bob Jenkins method) 
-void aum_SeedW(char *seed, int rounds)
+
+// seed IOTA with a 256-bit block of 4-byte words (Bob Jenkins method) 
+void iota_SeedW(char *seed, int rounds)
 {
 	register u4 i,l;
 	char s[STBYTES*2];
@@ -97,35 +99,34 @@ void aum_SeedW(char *seed, int rounds)
 	memset(s,0,l+1);
 	/* truncate seed to state-size if necessary */
 	for (i=0; i<l; i++) s[i] = seed[i];
-	aum_Reset();
+	iota_Reset();
 	memcpy((char *)state, (char *)s, l);
-	/* fatten the variables on some key-bytes */
-	b+=state[2]; c+=state[1]; d+=state[0]; 
-	aum();
-	for (i=0; i<rounds; i++) aum_Random();  
+	aa = state[0]; bb = state[1];
+	iota();
+	for (i=0; i<rounds; i++) iota_Random();  
 }
 
 
-// AUM # of bits internal state
-u4 aum_StateBits(void) {
+// IOTA # of bits internal state
+u4 iota_StateBits(void) {
 	return STBITS;
 }
 
 
-// AUM expected cycle length
-u4 aum_Cycle(void) {
+// IOTA expected cycle length
+u4 iota_Cycle(void) {
 	return (STBITS+1)/2;
 }
 
 
-// AUM maximum key length (bits)
-u4 aum_KeyLength(void) {
+// IOTA maximum key length (bits)
+u4 iota_KeyLength(void) {
 	return STBYTES*8;
 }
 
 
-// AUM Name
-char* aum_Name(void) {
+// IOTA Name
+char* iota_Name(void) {
 	return NAME;
 }
 
@@ -141,7 +142,7 @@ void testinit(u4 val) {
 static void statepeek(void) {
 	register u4 i;
 	++bcnt;
-	printf("%3u) aum%u...\n",bcnt,STSZ);
+	printf("%3u) iota%u...\n",bcnt,STSZ);
 	for (i=0; i<STSZ; i++) {
 		#ifdef VERBOSE
 		printf("state %3u: %11u %c %02X  | rsl %3u: %11u %c %02X\n",

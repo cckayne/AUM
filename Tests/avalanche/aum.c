@@ -1,4 +1,4 @@
-/* AUM - A minimal CSPRNG reflecting the Zen of cipher design
+/* AUM - A small-state CSPRNG reflecting the Zen of cipher design
    AUM is an AUM with an 8,16,32 or 64+4-word internal state
    AUM may be seeded with a 256-, 512-, 1024- or 2048-bit key
    AUM Copyright C.C.Kayne 2014, GNU GPL V.3, cckayne@gmail.com
@@ -9,12 +9,11 @@
 #include <string.h>
 #include "aum.h"
 
-#define TEST
-#define VERBOSE
+//#define TEST
+//#define VERBOSE
 
 // AUM defines
 
-/* select your AUM variant here */
 //#define AUM8
 #define AUM16
 //#define AUM32
@@ -51,7 +50,6 @@ static void statepeek(void);
 #endif
 
 
-// AUM is filled every 16, 32 or 64 rounds
 static void aum(void) {
 	u4 i;
 	for (i=0; i<STSZ; i++) {
@@ -67,7 +65,7 @@ static void aum(void) {
 }
 
 
-// obtain an AUM pseudo-random value in [0..2**32]
+// obtain a AUM pseudo-random value in [0..2**32]
 u4 aum_Random(void) {
 	u4 r = rsl[rcnt];
 	++rcnt;
@@ -99,8 +97,6 @@ void aum_SeedW(char *seed, int rounds)
 	for (i=0; i<l; i++) s[i] = seed[i];
 	aum_Reset();
 	memcpy((char *)state, (char *)s, l);
-	/* fatten the variables on some key-bytes */
-	b+=state[2]; c+=state[1]; d+=state[0]; 
 	aum();
 	for (i=0; i<rounds; i++) aum_Random();  
 }

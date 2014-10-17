@@ -56,7 +56,7 @@ begin
 	Close(fOut);
 	Writeln(IntToStr(total)+' bytes written to <'+fname+'>. ');
 	// NIST Section output
-	// NIST apparently divides a binary sequence into a user-specified number of bitsreams.
+	// NIST divides a binary sequence into a user-specified number of bitsreams.
 	// So here we help the user by outputting their sizes based on the total bytes written.
 	Writeln(bss,' bitstreams of length ',total div bss);
 end.

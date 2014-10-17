@@ -1,6 +1,6 @@
 /*
 	samtrial.c demonstrates the superiority of the MOD operation over 2 alternative schemes
-	for limiting the range of PRNG output values, as in <MOD 26> [A..Z], by calculating
+	for limiting the range of PRNG output values, as in <MOD 26> [A..Z], by measuring
 	Range and Standard Deviation over a series of cumulative Monte-Carlo trials. Tabulated
 	results clearly show that on each doubling, Sigma approaches zero more quickly and 
 	in a more regular manner using the MOD operator as against the SAM or LIM functions.

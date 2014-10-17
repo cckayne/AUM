@@ -18,8 +18,8 @@
 //#define OM
 //#define AUM8
 //#define AUM16
-#define AUM32
-//#define AUM64
+//#define AUM32
+#define AUM64
 
 /* internal state parameters */
 #ifdef OM

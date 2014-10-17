@@ -1,5 +1,5 @@
 unit aum;
-(* AUM - A stripped-down CSPRNG reflecting the Zen of cipher design
+(* AUM - A minimal CSPRNG reflecting the Zen of cipher design
    AUM is an AUM with a 16,32 or 64+4-word internal state
    AUM may be seeded with a 512-, 1024- or 2048-bit key
    AUM Copyright C.C.Kayne 2014, GNU GPL V.3, cckayne@gmail.com
@@ -140,7 +140,7 @@ procedure auSeedW(seed: string; rounds: integer);
 		auReset;
 		for i:=0 to l-1 do
 			byte((p+i)^) := byte(seed[i+1]);
-		// fatten the variables with some key-bytes
+		// fatten the variables on some key-bytes
 		b+=state[2]; c+=state[1]; d+=state[0]; 
 		aum;
 		for i:=1 to rounds do auRandom;  
