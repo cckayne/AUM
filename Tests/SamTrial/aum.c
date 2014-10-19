@@ -15,17 +15,12 @@
 // AUM defines
 /* Select your AUM variant here */
 
-//#define OM
 //#define AUM8
 //#define AUM16
 //#define AUM32
 #define AUM64
 
 /* internal state parameters */
-#ifdef OM
-#define STSZ 8
-#define NAME "OM"
-#endif
 #ifdef AUM8
 #define STSZ 8
 #define NAME "AUM8"
@@ -55,11 +50,6 @@ static u4 state[STSZ], rsl[STSZ], a=GOLDEN, b=GOLDEN, c=GOLDEN, d=GOLDEN, e=GOLD
 static void statepeek(void);
 #endif
 
-#ifdef OM
-/* Om is the unidimensional version of AUM */
-#define Om ( (e=a), (a=b^c), (b=c-d), (c=d+e), (d=e+a) )
-#endif
-
 
 // AUM is filled every 16, 32 or 64 rounds
 static void aum(void) {
@@ -79,7 +69,6 @@ static void aum(void) {
 
 // obtain a AUM pseudo-random value in [0..2**32]
 u4 aum_Random(void) {
-	#ifndef OM
 	u4 r = rsl[rcnt];
 	++rcnt;
 	if (rcnt==STSZ) {
@@ -87,9 +76,6 @@ u4 aum_Random(void) {
 		rcnt = 0;
 	}
 	return r;
-	#else
-	return Om;
-	#endif
 }
 
 
@@ -113,11 +99,9 @@ void aum_SeedW(char *seed, int rounds)
 	for (i=0; i<l; i++) s[i] = seed[i];
 	aum_Reset();
 	memcpy((char *)state, (char *)s, l);
-	/* fatten the variables with some key-bytes */
-	a+=state[3]; b+=state[2]; c+=state[1]; d+=state[0]; 
-	#ifndef OM
+	/* fatten the variables on some key-bytes */
+	b+=state[2]; c+=state[1]; d+=state[0]; 
 	aum();
-	#endif
 	for (i=0; i<rounds; i++) aum_Random();  
 }
 

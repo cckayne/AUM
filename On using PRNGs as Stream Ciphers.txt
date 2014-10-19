@@ -33,8 +33,10 @@ Raw output		Mod 2		Mod 26		Mod 256
 2606418804 		  0			  C			  74
 
 It is self-evidently impossible to deduce the original 32-bit quantity from the result of the modulo division. The generator's bit stream is rendered irrelevant. We can say whether the raw quantity was odd or even, heads or tails, which narrows our list of potential originating candidates to a mere 2 billion per byte, or list the hundreds of thousands of possible dividends resulting in the given character. The problem is clearly intractable and analysis can proceed no further. A cryptanalyst's only hope is to brute-force identical results by guessing the seed.
- 
-As long as a PRNG fulfills the pre-requisites of uniform distribution and lack of bias, it can be said to be "cryptographically secure" provided that its raw numeric output is not used as a key stream. Under MOD, we are just as safe with KISS as with ISAAC, even though the former was not designed with ciphering in mind, while the latter was. Both are equally unbiased and uniform (in fact, KISS arguably has the edge over ISAAC in appearance of randomness).
+
+From a cryptanalytical perspective, the foregoing boils down to this: Attempting to attack a pseudo-random number generator is a waste of time. The correct target is its confusion sequence, which is impenetrable.
+
+As long as a PRNG fulfills the pre-requisites of uniform distribution and lack of bias, it can be said to be "cryptographically secure" provided that its raw numeric output is not used as a key stream. Under MOD, we are just as safe with KISS as with ISAAC, even though the former was not designed with ciphering in mind, while the latter was. Both are equally unbiased (in fact, KISS arguably has the edge over ISAAC in appearance of randomness).
 
 What *is* vitally important when using any PRNG as the basis for a stream cipher is the property of the SEED. The RNG in question must be designed - or adapted - to accept an alphanumeric seed of no less than 64-bits in length. A 32-bit integer will not do. Even a 64-bit integer is cutting it fine. 
 
@@ -152,7 +154,7 @@ SGYMEXUDWAODVIQJUZGRZYVVKKWAJKTUPSPXLEADLJPNXEBESVATFMLNJBVKYUHQFPAZDVZGKWJMNDUI
 
 The streams are in no particular order and identical seeds were used.
 
-Could a critical reader tell the difference? Could he claim to discern patterns and biases in some? Could a hardened cracker brute-force these same results? Could he swear that these are not encipherments of some message? How many man-years might he waste trying to establish that? Could he name the generators? Could you? My own answer would be an unequivocal No. Modulo division is the great leveller. It can raise CONG to the level of ISAAC in a microsecond. The border between truly random and pseudo-random is non-existent.
+Could a "professional" tell the difference? Could he claim to discern patterns and biases? Could a hardened cracker brute-force these same results? Could he swear that these are not encipherments of some message? How many man-years might he waste trying to establish that? Could he name the generators? Could you? My own answer would be an unequivocal No. Modulo division is the great leveller. It can raise CONG to the level of ISAAC in a microsecond. The border between truly random and pseudo-random is non-existent.
 
 
 Conrad C. Kayne, October 2014
