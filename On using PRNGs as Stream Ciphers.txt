@@ -34,7 +34,7 @@ Raw output		Mod 2		Mod 26		Mod 256
 
 It is self-evidently impossible to deduce the original 32-bit quantity from the result of the modulo division. The generator's bit stream is rendered irrelevant. We can say whether the raw quantity was odd or even, heads or tails, which narrows our list of potential originating candidates to a mere 2 billion per byte, or list the hundreds of thousands of possible dividends resulting in the given character. The problem is clearly intractable and analysis can proceed no further. A cryptanalyst's only hope is to brute-force identical results by guessing the seed.
 
-From a cryptanalytical perspective, the foregoing boils down to this: Attempting to attack a pseudo-random number generator is a waste of time. The correct target is its confusion sequence, which is impenetrable.
+From a cryptanalytical perspective, the foregoing boils down to this: Attempting to attack a pseudo-random number generator is a waste of time. The correct target is its confusion sequence, which is impenetrable. And since dissecting random functions is the acme of futility, all cryptanalytical efforts in this area to date may justly be considered void.
 
 As long as a PRNG fulfills the pre-requisites of uniform distribution and lack of bias, it can be said to be "cryptographically secure" provided that its raw numeric output is not used as a key stream. Under MOD, we are just as safe with KISS as with ISAAC, even though the former was not designed with ciphering in mind, while the latter was. Both are equally unbiased (in fact, KISS arguably has the edge over ISAAC in appearance of randomness).
 
